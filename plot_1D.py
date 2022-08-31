@@ -15,7 +15,7 @@ def plot_1d_loss_err(surf_file, xmin=-1.0, xmax=1.0, loss_max=5, log=False, show
     f = h5py.File(surf_file,'r')
     print(f.keys())
     x = f['xcoordinates'][:]
-    assert 'train_loss' in f.keys(), "'train_loss' does not exist"
+    assert 'test_loss' in f.keys(), "'train_loss' does not exist"
     train_loss = f['train_loss'][:]
     train_acc = f['train_acc'][:]
 

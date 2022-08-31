@@ -1,0 +1,10 @@
+import h5py
+filename = "file.hdf5"
+
+with h5py.File('/home/oliver/Documents/loss-landscape/cifar10/trained_nets/vgg9_sgd_lr=0.1_bs=128_wd=0.0_save_epoch=1_model_300.t7_vgg9_sgd_lr=0.1_bs=8192_wd=0.0_save_epoch=1_model_300.t7_states.h5_[-0.5,1.5,401].h5', "r") as f:
+    # List all groups
+    print("Keys: %s" % f.keys())
+    a_group_key = list(f.keys())[0]
+
+    # Get the data
+    data = list(f[a_group_key])
