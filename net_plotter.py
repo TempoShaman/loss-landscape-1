@@ -14,6 +14,9 @@ import os
 #                 Supporting functions for weights manipulation
 ################################################################################
 def get_weights(net):
+    assert net is not None, 'Net is most likely not loaded correctly'
+
+    #print("getting weights")
     """ Extract parameters from net, and return a list of tensors"""
     return [p.data for p in net.parameters()]
 
@@ -23,6 +26,8 @@ def set_weights(net, weights, directions=None, step=None):
         Overwrite the network's weights with a specified list of tensors
         or change weights along directions with a step size.
     """
+
+
     if directions is None:
         # You cannot specify a step length without a direction.
         for (p, w) in zip(net.parameters(), weights):
@@ -45,6 +50,8 @@ def set_states(net, states, directions=None, step=None):
     """
         Overwrite the network's state_dict or change it along directions with a step size.
     """
+    print("STATES LENGHT: ", len(states))
+    #print(states)
     if directions is None:
         net.load_state_dict(states)
     else:
@@ -52,11 +59,15 @@ def set_states(net, states, directions=None, step=None):
         if len(directions) == 2:
             dx = directions[0]
             dy = directions[1]
-            changes = [d0*step[0] + d1*step[1] for (d0, d1) in zip(dx, dy)]
+            changes = [d0 * step[0] + d1 * step[1] for (d0, d1) in zip(dx, dy)]
         else:
-            changes = [d*step for d in directions[0]]
+            changes = [d * step for d in directions[0]]
 
         new_states = copy.deepcopy(states)
+        # print(len(directions))
+        # print("NEW STATES LENGHT: ",len(new_states))
+        # print("CHANGES LENGHT: ", len(changes))
+        # print("THESE MUST BE EQUAL")
         assert (len(new_states) == len(changes))
         for (k, v), d in zip(new_states.items(), changes):
             d = torch.tensor(d)
@@ -105,6 +116,7 @@ def normalize_direction(direction, weights, norm='filter'):
           weights: a variable of the original model for one layer
           norm: normalization method, 'filter' | 'layer' | 'weight'
     """
+
     if norm == 'filter':
         # Rescale the filters (weights in group) in 'direction' so that each
         # filter has the same norm as its corresponding filter in 'weights'.
@@ -211,15 +223,15 @@ def create_random_direction(net, dir_type='weights', ignore='biasbn', norm='filt
 
     # random direction
     if dir_type == 'weights':
-        weights = get_weights(net) # a list of parameters.
+        weights = get_weights(net)  # a list of parameters.
         direction = get_random_weights(weights)
         normalize_directions_for_weights(direction, weights, norm, ignore)
+        return direction
     elif dir_type == 'states':
-        states = net.state_dict() # a dict of parameters, including BN's running mean/var.
+        states = net.state_dict()  # a dict of parameters, including BN's running mean/var.
         direction = get_random_states(states)
         normalize_directions_for_states(direction, states, norm, ignore)
-
-    return direction
+        return direction
 
 
 def setup_direction(args, dir_file, net):
@@ -231,10 +243,10 @@ def setup_direction(args, dir_file, net):
     print('-------------------------------------------------------------------')
     print('setup_direction')
     print('-------------------------------------------------------------------')
-    
+
     # Setup env for preventing lock on h5py file for newer h5py versions
     os.environ["HDF5_USE_FILE_LOCKING"] = "FALSE"
-    
+
     # Skip if the direction file already exists
     if exists(dir_file):
         f = h5py.File(dir_file, 'r')

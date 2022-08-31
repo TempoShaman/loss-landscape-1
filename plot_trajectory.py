@@ -17,8 +17,8 @@ import plot_2D
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Plot optimization trajectory')
-    parser.add_argument('--dataset', default='cifar10', help='dataset')
-    parser.add_argument('--model', default='resnet56', help='trained models')
+    parser.add_argument('--dataset', default='miniimagenet', help='dataset')
+    parser.add_argument('--model', default='fewshot', help='trained models')
     parser.add_argument('--model_folder', default='', help='folders for models to be projected')
     parser.add_argument('--dir_type', default='weights',
         help="""direction type: weights (all weights except bias and BN paras) |
@@ -27,7 +27,7 @@ if __name__ == '__main__':
     parser.add_argument('--prefix', default='model_', help='prefix for the checkpint model')
     parser.add_argument('--suffix', default='.t7', help='prefix for the checkpint model')
     parser.add_argument('--start_epoch', default=0, type=int, help='min index of epochs')
-    parser.add_argument('--max_epoch', default=300, type=int, help='max number of epochs')
+    parser.add_argument('--max_epoch', default=100, type=int, help='max number of epochs')
     parser.add_argument('--save_epoch', default=1, type=int, help='save models every few epochs')
     parser.add_argument('--dir_file', default='', help='load the direction file for projection')
 
